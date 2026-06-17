@@ -1,0 +1,9 @@
+{
+  "identifier": "default",
+  "description": "Default capabilities for textshot",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "clipboard-manager:default"
+  ]
+}

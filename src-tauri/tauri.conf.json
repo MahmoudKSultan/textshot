@@ -1,0 +1,35 @@
+{
+
+  "productName": "textshot",
+  "version": "0.1.0",
+  "identifier": "com.textshot.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1421",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "TextShot",
+        "width": 640,
+        "height": 520,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "appimage"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png"
+    ],
+    "category": "Utility"
+  },
+  "plugins": {}
+}
