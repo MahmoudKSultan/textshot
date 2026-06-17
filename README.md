@@ -2,6 +2,8 @@
 
 A desktop OCR application for Linux that captures a screen region, runs OCR (Tesseract), and copies the recognized text to your clipboard.
 
+<img src="src-tauri/icons/128x128.png" width="128" height="128" alt="TextShot Icon">
+
 Built with [Tauri v2](https://v2.tauri.app), React, TypeScript, and Rust.
 
 ## Features
