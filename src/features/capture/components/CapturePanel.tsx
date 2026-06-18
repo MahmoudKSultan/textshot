@@ -4,6 +4,7 @@ import { CaptureButton } from "./CaptureButton";
 import { TextPreview } from "./TextPreview";
 import { SettingsPanel } from "./SettingsPanel";
 import { useShortcuts } from "../hooks/useShortcuts";
+import { HelpPanel } from "./HelpPanel";
 
 interface Settings {
   ocr_language: string;
@@ -25,6 +26,7 @@ export function CapturePanel() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const { shortcuts, updateShortcut } = useShortcuts();
 
@@ -59,7 +61,9 @@ export function CapturePanel() {
     <div className="flex flex-col gap-3 flex-1 min-h-0">
       <div className="flex items-center justify-between shrink-0">
         <h2 className="text-xs font-medium text-stone-500 uppercase tracking-wider">Output</h2>
-        <SettingsPanel
+        <div className="flex items-center gap-1">
+          <HelpPanel open={helpOpen} onToggle={() => setHelpOpen((p) => !p)} />
+          <SettingsPanel
           open={settingsOpen}
           onToggle={() => setSettingsOpen((prev) => !prev)}
           settings={settings}
@@ -78,6 +82,7 @@ export function CapturePanel() {
             setSettings((prev) => ({ ...prev, save_screenshot: enabled }))
           }
         />
+      </div>
       </div>
       <TextPreview
         text={text}
