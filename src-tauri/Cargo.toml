@@ -1,6 +1,6 @@
 [package]
 name = "textshot"
-version = "0.1.0"
+version = "0.1.1"
 description = "Screen text capture tool"
 authors = ["textshot"]
 edition = "2021"
