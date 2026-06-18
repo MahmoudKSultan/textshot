@@ -29,7 +29,12 @@
       "icons/128x128.png",
       "icons/128x128@2x.png"
     ],
-    "category": "Utility"
+    "category": "Utility",
+    "linux": {
+      "deb": {
+        "depends": ["tesseract-ocr", "tesseract-ocr-eng"]
+      }
+    }
   },
   "plugins": {}
 }
