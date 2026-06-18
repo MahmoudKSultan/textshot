@@ -32,10 +32,12 @@ impl OCRProvider for TesseractOCRProvider {
             AppError::OCRFailed
         })?;
 
-        tracing::debug!("OCR recognized {} characters", text.len());
+        let confidence = lt.mean_text_conf() as f64;
+
+        tracing::debug!("OCR recognized {} characters (confidence: {:.1}%)", text.len(), confidence);
         Ok(OCRResult {
             text,
-            confidence: 0.0,
+            confidence,
             language: self.language.clone(),
         })
     }
