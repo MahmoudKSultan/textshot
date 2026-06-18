@@ -141,8 +141,9 @@ TextShot uses **xdg-desktop-portal** for screen capture, which integrates with y
 |---|---|
 | **GNOME** (Ubuntu, Fedora) | ✅ Full support — interactive area selection via portal |
 | **KDE Plasma** | ✅ Should work — uses KDE's portal screenshot |
-| **Linux Mint (Cinnamon/MATE)** | ⚠️ Portal may take a full screenshot instead of interactive selection. This is a limitation of the desktop's portal backend. |
-| **XFCE / Sway / other Wayland** | ⚠️ Not tested — may have partial or no portal support |
+| **Linux Mint (Cinnamon/MATE)** | ✅ Works — falls back to `gnome-screenshot --area` or `mate-screenshot --area` if the portal doesn't support interactive selection. |
+| **XFCE** | ✅ Works — falls back to `xfce4-screenshooter --region` if the portal doesn't support interactive selection. |
+| **Other desktops** | ⚠️ Requires `gnome-screenshot`, `mate-screenshot`, or `xfce4-screenshooter` for interactive selection. Falls back to non-interactive portal capture if none are available. |
 
 ## Tech Stack
 

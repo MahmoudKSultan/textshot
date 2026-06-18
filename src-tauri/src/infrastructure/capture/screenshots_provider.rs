@@ -13,6 +13,44 @@ fn runtime() -> &'static tokio::runtime::Runtime {
     })
 }
 
+fn try_cli_interactive() -> Result<Vec<u8>, AppError> {
+    let out_path = {
+        let mut p = std::env::temp_dir();
+        p.push(format!("textshot_{}.png", std::process::id()));
+        p
+    };
+
+    let tools: &[(&str, &[&str])] = &[
+        ("gnome-screenshot", &["--area", "--file"]),
+        ("mate-screenshot", &["--area", "--file"]),
+        ("xfce4-screenshooter", &["--region", "--save"]),
+    ];
+
+    for (tool, args) in tools {
+        let file_flag = format!("{}={}", args[1], out_path.to_string_lossy());
+        let output = std::process::Command::new(tool)
+            .arg(args[0])
+            .arg(&file_flag)
+            .output()
+            .ok();
+
+        if let Some(out) = output {
+            if out.status.success() {
+                if let Ok(bytes) = std::fs::read(&out_path) {
+                    let _ = std::fs::remove_file(&out_path);
+                    if bytes.len() > 100 {
+                        tracing::info!("Captured via {} ({} bytes)", tool, bytes.len());
+                        return Ok(bytes);
+                    }
+                }
+            }
+        }
+        let _ = std::fs::remove_file(&out_path);
+    }
+
+    Err(AppError::ScreenCaptureFailed)
+}
+
 impl ScreenshotsCaptureProvider {
     pub fn new() -> Self {
         tracing::info!("Initializing ScreenshotsCaptureProvider (portal)");
@@ -40,18 +78,38 @@ impl CaptureProvider for ScreenshotsCaptureProvider {
 
 impl ScreenshotsCaptureProvider {
     pub fn capture_interactive(&self) -> Result<Vec<u8>, AppError> {
-        let bytes = runtime().block_on(Self::capture_interactive_inner())?;
-        tracing::info!("Interactive capture ({} bytes)", bytes.len());
-        Ok(bytes)
+        tracing::info!("Attempting interactive screen capture");
+
+        let result = runtime().block_on(Self::capture_interactive_inner());
+
+        match result {
+            Ok(bytes) => {
+                tracing::info!("Portal interactive capture succeeded ({} bytes)", bytes.len());
+                Ok(bytes)
+            }
+            Err(portal_err) => {
+                tracing::info!("Portal interactive capture failed, trying CLI fallback: {:?}", portal_err);
+                try_cli_interactive()
+                    .map_err(|cli_err| {
+                        tracing::error!("All capture methods failed. Portal: {:?}, CLI: {:?}", portal_err, cli_err);
+                        AppError::ScreenCaptureFailed
+                    })
+            }
+        }
     }
 
     async fn capture_interactive_inner() -> Result<Vec<u8>, AppError> {
         use ashpd::desktop::screenshot::Screenshot;
 
-        let request = Screenshot::request().interactive(true).send().await.map_err(|e| {
-            tracing::error!("Portal interactive screenshot send failed: {:?}", e);
-            AppError::ScreenCaptureFailed
-        })?;
+        let request = Screenshot::request()
+            .interactive(true)
+            .modal(true)
+            .send()
+            .await
+            .map_err(|e| {
+                tracing::error!("Portal interactive screenshot send failed: {:?}", e);
+                AppError::ScreenCaptureFailed
+            })?;
 
         let response = request.response().map_err(|e| {
             tracing::error!("Portal interactive screenshot response failed: {:?}", e);
