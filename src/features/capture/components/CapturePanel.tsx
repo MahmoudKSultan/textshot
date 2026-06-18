@@ -39,7 +39,12 @@ export function CapturePanel() {
       setText(result.text);
       setConfidence(result.confidence);
     } catch (e) {
-      const msg = typeof e === "string" ? e.split("##")[0] : "An unexpected error occurred.";
+      const raw = (e && typeof e === "object" && "message" in e)
+        ? (e as { message: string }).message
+        : typeof e === "string"
+          ? e
+          : "An unexpected error occurred.";
+      const msg = raw.split("##")[0];
       setError(msg);
     }
 
