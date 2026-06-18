@@ -14,7 +14,7 @@ interface Settings {
 }
 
 const defaultSettings: Settings = {
-  ocr_language: "eng",
+  ocr_language: "eng+ara+fra+spa",
   auto_copy: true,
   show_confidence: true,
   save_screenshot: false,
@@ -35,7 +35,7 @@ export function CapturePanel() {
     setError(null);
 
     try {
-      const result = await captureScreen(settings.ocr_language, settings.auto_copy);
+      const result = await captureScreen(settings.auto_copy);
       setText(result.text);
       setConfidence(result.confidence);
     } catch {
@@ -43,7 +43,7 @@ export function CapturePanel() {
     }
 
     setLoading(false);
-  }, [settings.ocr_language, settings.auto_copy]);
+  }, [settings.auto_copy]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -69,9 +69,6 @@ export function CapturePanel() {
           settings={settings}
           shortcuts={shortcuts}
           onUpdateShortcut={updateShortcut}
-          onLanguageChange={(lang) =>
-            setSettings((prev) => ({ ...prev, ocr_language: lang }))
-          }
           onAutoCopyChange={(enabled) =>
             setSettings((prev) => ({ ...prev, auto_copy: enabled }))
           }

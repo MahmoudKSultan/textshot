@@ -2,19 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import type { Shortcut, Action } from "../hooks/useShortcuts";
 import { formatShortcut } from "../hooks/useShortcuts";
 
-const LANGUAGES = [
-  { code: "eng", label: "English" },
-  { code: "ara", label: "Arabic" },
-  { code: "fra", label: "French" },
-  { code: "deu", label: "German" },
-  { code: "spa", label: "Spanish" },
-  { code: "ita", label: "Italian" },
-  { code: "por", label: "Portuguese" },
-  { code: "rus", label: "Russian" },
-  { code: "jpn", label: "Japanese" },
-  { code: "chi_sim", label: "Chinese (Simplified)" },
-];
-
 interface SettingsData {
   ocr_language: string;
   auto_copy: boolean;
@@ -28,7 +15,6 @@ interface SettingsPanelProps {
   settings: SettingsData;
   shortcuts: Record<Action, Shortcut>;
   onUpdateShortcut: (action: Action, s: Shortcut) => void;
-  onLanguageChange: (lang: string) => void;
   onAutoCopyChange: (enabled: boolean) => void;
   onShowConfidenceChange: (enabled: boolean) => void;
   onSaveScreenshotChange: (enabled: boolean) => void;
@@ -110,7 +96,7 @@ function ShortcutRecorder({
 
 export function SettingsPanel({
   open, onToggle, settings, shortcuts, onUpdateShortcut,
-  onLanguageChange, onAutoCopyChange, onShowConfidenceChange, onSaveScreenshotChange,
+  onAutoCopyChange, onShowConfidenceChange, onSaveScreenshotChange,
 }: SettingsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [tab, setTab] = useState<Tab>("general");
@@ -182,22 +168,6 @@ export function SettingsPanel({
             {tab === "general" && (
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="ocr-lang" className="block text-[12px] font-medium text-stone-500 mb-1.5 uppercase tracking-wider">
-                    OCR Language
-                  </label>
-                  <select
-                    id="ocr-lang"
-                    value={settings.ocr_language}
-                    onChange={(e) => onLanguageChange(e.target.value)}
-                    className="w-full text-[13px] border border-stone-300 rounded-md px-3 py-2 bg-white focus-visible:outline-2 focus-visible:outline-stone-500"
-                  >
-                    {LANGUAGES.map((l) => (
-                      <option key={l.code} value={l.code}>{l.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
                   <label className="block text-[12px] font-medium text-stone-500 mb-2 uppercase tracking-wider">
                     Behavior
                   </label>
@@ -206,6 +176,10 @@ export function SettingsPanel({
                     <Toggle id="show-confidence" label="Show confidence score" checked={settings.show_confidence} onChange={onShowConfidenceChange} />
                     <Toggle id="save-screenshot" label="Save screenshot to Pictures" checked={settings.save_screenshot} onChange={onSaveScreenshotChange} />
                   </div>
+                </div>
+                <div className="text-[12px] text-stone-400 leading-relaxed bg-stone-50 rounded-lg p-3">
+                  <p className="font-medium text-stone-500 mb-1">Languages</p>
+                  English, Arabic, French, and Spanish are detected automatically.
                 </div>
               </div>
             )}

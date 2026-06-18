@@ -32,7 +32,7 @@
     "category": "Utility",
     "linux": {
       "deb": {
-        "depends": ["tesseract-ocr", "tesseract-ocr-eng", "gnome-screenshot"]
+        "depends": ["tesseract-ocr", "tesseract-ocr-eng", "tesseract-ocr-ara", "tesseract-ocr-fra", "tesseract-ocr-spa", "gnome-screenshot"]
       }
     }
   },

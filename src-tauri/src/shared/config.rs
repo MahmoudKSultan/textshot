@@ -9,7 +9,7 @@ pub struct AppConfig {
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
-            ocr_language: "eng".to_string(),
+            ocr_language: "eng+ara+fra+spa".to_string(),
             auto_copy: true,
         }
     }

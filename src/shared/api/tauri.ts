@@ -6,11 +6,10 @@ export interface Settings {
 }
 
 export async function captureScreen(
-  language?: string,
   autoCopy?: boolean,
 ): Promise<{ text: string; confidence: number }> {
   const result = await invoke<{ text: string; confidence: number }>("capture_screen", {
-    language: language ?? null,
+    language: null,
     autoCopy: autoCopy ?? null,
   });
   return result;
