@@ -30,16 +30,9 @@ Built with [Tauri v2](https://v2.tauri.app), React, TypeScript, and Rust.
 ## Requirements
 
 - **Linux** (tested on Ubuntu 24.04 / GNOME Wayland; also works on other distros with xdg-desktop-portal)
-- **Tesseract OCR** (with English language data):
+- **Tesseract OCR** with language packs — installed automatically with the `.deb` package below. For AppImage or manual install:
   ```bash
-  sudo apt install tesseract-ocr tesseract-ocr-eng
-  ```
-  For additional languages:
-  ```bash
-  sudo apt install tesseract-ocr-fra   # French
-  sudo apt install tesseract-ocr-ara   # Arabic
-  sudo apt install tesseract-ocr-deu   # German
-  # See all available: apt search tesseract-ocr-
+  sudo apt install tesseract-ocr tesseract-ocr-eng tesseract-ocr-ara tesseract-ocr-fra tesseract-ocr-spa
   ```
 - **GNOME AppIndicator extension** (for system tray icon on GNOME) — usually pre-installed on Ubuntu
 
@@ -51,16 +44,16 @@ Download the `.deb` or `.AppImage` from the [Releases page](https://github.com/M
 
 **Debian / Ubuntu / Linux Mint:**
 ```bash
-sudo dpkg -i textshot_0.1.0_amd64.deb
+sudo apt install ./textshot_0.1.2_amd64.deb
 ```
 
 **Any Linux (AppImage — no install needed):**
 ```bash
-chmod +x textshot_0.1.0_amd64.AppImage
-./textshot_0.1.0_amd64.AppImage
+chmod +x textshot_0.1.2_amd64.AppImage
+./textshot_0.1.2_amd64.AppImage
 ```
 
-> **Note:** Make sure Tesseract is installed first (`sudo apt install tesseract-ocr tesseract-ocr-eng`). Without it, the app will fail with `libtesseract.so.5: cannot open shared object file`.
+> **Note:** Using `apt install` (not `dpkg -i`) automatically pulls in Tesseract and all required language packs.
 
 ### Option 2: Build from source
 
