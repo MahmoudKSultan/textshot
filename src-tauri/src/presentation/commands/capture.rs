@@ -3,7 +3,19 @@ use crate::infrastructure::capture::screenshots_provider::ScreenshotsCaptureProv
 use crate::infrastructure::ocr::tesseract_provider::TesseractOCRProvider;
 use crate::application::interfaces::ocr_provider::OCRProvider;
 use crate::application::use_cases::ocr_processing;
+use crate::shared::errors::AppError;
 use crate::AppState;
+
+fn user_facing_error(e: &AppError) -> &'static str {
+    match e {
+        AppError::ScreenCaptureFailed => "Capture was cancelled or failed. Try again.",
+        AppError::OCRFailed => "OCR processing failed. Make sure Tesseract is installed and the language pack is available.",
+        AppError::NoTextDetected => "No text detected in the selected region. Try selecting a region with more text or changing the OCR language.",
+        AppError::ClipboardFailed => "Failed to copy text to clipboard.",
+        AppError::PermissionDenied => "Permission denied. Check your portal permissions.",
+        _ => "An unexpected error occurred.",
+    }
+}
 
 fn run_capture_inner(
     app: &tauri::AppHandle,
@@ -15,19 +27,23 @@ fn run_capture_inner(
 
     let img_bytes = capture
         .capture_interactive()
-        .map_err(|e| format!("Capture failed: {:?}", e))?;
+        .map_err(|e| format!("{}##{}", user_facing_error(&e), e))?;
 
     let result = ocr
         .recognize(&img_bytes)
-        .map_err(|e| format!("OCR failed: {:?}", e))?;
+        .map_err(|e| format!("{}##{}", user_facing_error(&e), e))?;
 
     let text = ocr_processing::normalize_text(&result.text);
 
-    if !text.is_empty() && copy_enabled {
+    if text.is_empty() {
+        return Err(format!("{}##NoText", user_facing_error(&AppError::NoTextDetected)));
+    }
+
+    if copy_enabled {
         use tauri_plugin_clipboard_manager::ClipboardExt;
         app.clipboard()
             .write_text(&text)
-            .map_err(|e| format!("Clipboard write failed: {}", e))?;
+            .map_err(|e| format!("{}##{}", user_facing_error(&AppError::ClipboardFailed), e))?;
     }
 
     tracing::info!("Captured and OCR'd ({} chars, lang={})", text.len(), lang);

@@ -38,8 +38,9 @@ export function CapturePanel() {
       const result = await captureScreen(settings.ocr_language, settings.auto_copy);
       setText(result.text);
       setConfidence(result.confidence);
-    } catch {
-      setError("Capture failed or was cancelled");
+    } catch (e) {
+      const msg = typeof e === "string" ? e.split("##")[0] : "An unexpected error occurred.";
+      setError(msg);
     }
 
     setLoading(false);
